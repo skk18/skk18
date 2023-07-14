@@ -1,0 +1,165 @@
+diff --git a/sitewide_alert/config/install/sitewide_alert.settings.yml b/sitewide_alert/config/install/sitewide_alert.settings.yml
+index 609b81d..195372b 100644
+--- a/sitewide_alert/config/install/sitewide_alert.settings.yml
++++ b/sitewide_alert/config/install/sitewide_alert.settings.yml
+@@ -1,4 +1,6 @@
+ show_on_admin: 0
+ alert_styles: 'primary|Default'
++alert_priority: 'low|Default'
+ refresh_interval: 15
+ automatic_refresh: 1
++    
+\ No newline at end of file
+diff --git a/sitewide_alert/config/schema/sitewide_alert.shema.yml b/sitewide_alert/config/schema/sitewide_alert.shema.yml
+index f0966ce..d0c08b7 100644
+--- a/sitewide_alert/config/schema/sitewide_alert.shema.yml
++++ b/sitewide_alert/config/schema/sitewide_alert.shema.yml
+@@ -8,6 +8,9 @@ sitewide_alert.settings:
+     alert_styles:
+       type: 'string'
+       label: 'Available alert styles'
++    alert_priority:
++      type: 'string'
++      label: 'Available alert priorities'
+     refresh_interval:
+       type: 'integer'
+       label: 'Browser Refresh Interval (in seconds)'
+diff --git a/sitewide_alert/sitewide_alert.module b/sitewide_alert/sitewide_alert.module
+index c2a32ca..dd3d782 100644
+--- a/sitewide_alert/sitewide_alert.module
++++ b/sitewide_alert/sitewide_alert.module
+@@ -51,12 +51,20 @@ function template_preprocess_sitewide_alert(&$variables) {
+   $variables['is_dismissible'] = $sitewideAlert->isDismissible();
+   $variables['style'] = $sitewideAlert->getStyle();
+   $variables['style_class'] = $sitewideAlert->getStyleClass();
++  $variables['priority'] = $sitewideAlert->getPriority();
++  $variables['priority_class'] = $sitewideAlert->getPriorityClass();
+ 
+   $variables['attributes']['class'] = [
+     'sitewide-alert',
+     'alert',
+     $sitewideAlert->getStyleClass(),
+   ];
++  
++  $variables['attributes']['class'] = [
++    'sitewide-alert',
++    'alert',
++    $sitewideAlert->getPriorityClass(),
++  ];
+ 
+   // The data-uuid attribute is needed for the dynamic loading via JS to work.
+   $variables['attributes']['data-uuid'] = $sitewideAlert->uuid();
+@@ -77,8 +85,10 @@ function sitewide_alert_theme_suggestions_sitewide_alert(array $variables) {
+   $sitewideAlert = $variables['elements']['#sitewide_alert'];
+ 
+   $suggestions[] = 'sitewide_alert__' . $sitewideAlert->getStyle();
++  $suggestions[] = 'sitewide_alert__' . $sitewideAlert->getPriority();
+   $suggestions[] = 'sitewide_alert__' . ($sitewideAlert->isDismissible() ? 'dismissible' : 'notdismissible');
+   $suggestions[] = 'sitewide_alert__' . $sitewideAlert->getStyle() . '__' . ($sitewideAlert->isDismissible() ? 'dismissible' : 'notdismissible');
++  $suggestions[] = 'sitewide_alert__' . $sitewideAlert->getPriority() . '__' . ($sitewideAlert->isDismissible() ? 'dismissible' : 'notdismissible');
+ 
+   return $suggestions;
+ }
+diff --git a/sitewide_alert/src/AlertStyleProvider.php b/sitewide_alert/src/AlertStyleProvider.php
+index 129a224..a31c964 100644
+--- a/sitewide_alert/src/AlertStyleProvider.php
++++ b/sitewide_alert/src/AlertStyleProvider.php
+@@ -51,6 +51,7 @@ class AlertStyleProvider {
+    */
+   public static function alertStyleName(string $class): TranslatableMarkup {
+     $alertStyle = self::alertStyles();
++	
+     if (isset($alertStyle[$class])) {
+       return new TranslatableMarkup($alertStyle[$class]);
+     }
+diff --git a/sitewide_alert/src/Controller/SitewideAlertsController.php b/sitewide_alert/src/Controller/SitewideAlertsController.php
+index 055d476..62ec486 100644
+--- a/sitewide_alert/src/Controller/SitewideAlertsController.php
++++ b/sitewide_alert/src/Controller/SitewideAlertsController.php
+@@ -75,6 +75,7 @@ class SitewideAlertsController extends ControllerBase {
+         'dismissible' => $sitewideAlert->isDismissible(),
+         'dismissalIgnoreBefore' => $sitewideAlert->getDismissibleIgnoreBeforeTime(),
+         'styleClass' => $sitewideAlert->getStyleClass(),
++        'priorityClass' => $sitewideAlert->getPriorityClass(),
+         'showOnPages' => $sitewideAlert->getPagesToShowOn(),
+         'negateShowOnPages' => $sitewideAlert->shouldNegatePagesToShowOn(),
+         'renderedAlert' => $this->renderer->renderPlain($alertView),
+diff --git a/sitewide_alert/src/Entity/SitewideAlertInterface.php b/sitewide_alert/src/Entity/SitewideAlertInterface.php
+index 63d5a7a..82fe67d 100644
+--- a/sitewide_alert/src/Entity/SitewideAlertInterface.php
++++ b/sitewide_alert/src/Entity/SitewideAlertInterface.php
+@@ -143,6 +143,25 @@ interface SitewideAlertInterface extends ContentEntityInterface, RevisionLogInte
+    * @return array
+    *   The patterns of pages to show on.
+    */
++   
++    public function getPriority():? string;
++
++  /**
++   * Gets the style class to use for the alert.
++   *
++   * @return string
++   *   The style class to use.
++   */
++  public function getPriorityClass(): string;
++
++  /**
++   * Gets the pages to show on.
++   *
++   * @return array
++   *   The patterns of pages to show on.
++   */
++   
++   
+   public function getPagesToShowOn(): array;
+ 
+   /**
+diff --git a/sitewide_alert/src/Form/SitewideAlertConfigForm.php b/sitewide_alert/src/Form/SitewideAlertConfigForm.php
+index 0a67fb9..e134375 100644
+--- a/sitewide_alert/src/Form/SitewideAlertConfigForm.php
++++ b/sitewide_alert/src/Form/SitewideAlertConfigForm.php
+@@ -94,6 +94,16 @@ class SitewideAlertConfigForm extends ConfigFormBase {
+           'Enter the list of key|value pairs of alert styles separated by new line, where key is the alert style class name without prefix, and the value is displayed to the alert editor. <br/><strong>For example:</strong><ul><li>To add the class <em>alert-info</em>, use <code>info|Info</code></li><li>To add the class <em>alert-danger</em>, use <code>danger|Very Important</code></li></ul><strong>Warning!</strong> Pre-existing values will be reset.'
+       ) . '<br><br></p>',
+     ];
++	
++	$form['alert_priority'] = [
++      '#type' => 'textarea',
++      '#title' => $this->t('Available alert priority'),
++      '#default_value' => $config->get('alert_priority'),
++      '#description' => '<p>' . $this->t(
++          'Enter the list of key|value pairs of alert priority separated by new line, where key is the alert priority class name without prefix, and the value is displayed to the alert editor. <br/><strong>For example:</strong><ul><li>To add the class <em>alert-high</em>, use <code>high|High</code></li><li>To add the class <em>alert-low</em>, use <code>low|Low</code></li></ul><strong>Warning!</strong> Pre-existing values will be reset.'
++      ) . '<br><br></p>',
++    ];
++
+ 
+     $form['automatic_refresh'] = [
+       '#type' => 'checkbox',
+@@ -126,6 +136,7 @@ class SitewideAlertConfigForm extends ConfigFormBase {
+     $this->config('sitewide_alert.settings')
+       ->set('show_on_admin', $form_state->getValue('show_on_admin'))
+       ->set('alert_styles', $form_state->getValue('alert_styles'))
++      ->set('alert_priority', $form_state->getValue('alert_priority'))
+       ->set('refresh_interval', $form_state->getValue('refresh_interval'))
+       ->set('automatic_refresh', $form_state->getValue('automatic_refresh'))
+       ->save();
+diff --git a/sitewide_alert/src/SitewideAlertListBuilder.php b/sitewide_alert/src/SitewideAlertListBuilder.php
+index 6e0249d..2ceedef 100644
+--- a/sitewide_alert/src/SitewideAlertListBuilder.php
++++ b/sitewide_alert/src/SitewideAlertListBuilder.php
+@@ -21,6 +21,7 @@ class SitewideAlertListBuilder extends EntityListBuilder {
+   public function buildHeader(): array {
+     $header['name'] = $this->t('Name');
+     $header['style'] = $this->t('Style');
++    $header['priority'] = $this->t('Priority');
+     $header['active'] = $this->t('Active');
+     $header['scheduled'] = $this->t('Scheduled');
+     return $header + parent::buildHeader();
+@@ -37,6 +38,7 @@ class SitewideAlertListBuilder extends EntityListBuilder {
+       ['sitewide_alert' => $entity->id()]
+     );
+     $row['style'] = AlertStyleProvider::alertStyleName($entity->getStyle());
++    $row['priority'] = AlertPriorityProvider::alertPriorityName($entity->getPriority());
+     $row['active'] = $entity->isPublished() ? '✔' : '✘';
+     $row['scheduled'] = $entity->isScheduled() ? '✔' : '✘';
+     return $row + parent::buildRow($entity);
