@@ -94,6 +94,16 @@ class SitewideAlertConfigForm extends ConfigFormBase {
           'Enter the list of key|value pairs of alert styles separated by new line, where key is the alert style class name without prefix, and the value is displayed to the alert editor. <br/><strong>For example:</strong><ul><li>To add the class <em>alert-info</em>, use <code>info|Info</code></li><li>To add the class <em>alert-danger</em>, use <code>danger|Very Important</code></li></ul><strong>Warning!</strong> Pre-existing values will be reset.'
       ) . '<br><br></p>',
     ];
+	
+	$form['alert_priority'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Available alert priority'),
+      '#default_value' => $config->get('alert_priority'),
+      '#description' => '<p>' . $this->t(
+          'Enter the list of key|value pairs of alert priority separated by new line, where key is the alert priority class name without prefix, and the value is displayed to the alert editor. <br/><strong>For example:</strong><ul><li>To add the class <em>alert-high</em>, use <code>high|High</code></li><li>To add the class <em>alert-low</em>, use <code>low|Low</code></li></ul><strong>Warning!</strong> Pre-existing values will be reset.'
+      ) . '<br><br></p>',
+    ];
+
 
     $form['automatic_refresh'] = [
       '#type' => 'checkbox',
@@ -126,6 +136,7 @@ class SitewideAlertConfigForm extends ConfigFormBase {
     $this->config('sitewide_alert.settings')
       ->set('show_on_admin', $form_state->getValue('show_on_admin'))
       ->set('alert_styles', $form_state->getValue('alert_styles'))
+      ->set('alert_priority', $form_state->getValue('alert_priority'))
       ->set('refresh_interval', $form_state->getValue('refresh_interval'))
       ->set('automatic_refresh', $form_state->getValue('automatic_refresh'))
       ->save();
