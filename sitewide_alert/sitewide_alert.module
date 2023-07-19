@@ -51,11 +51,19 @@ function template_preprocess_sitewide_alert(&$variables) {
   $variables['is_dismissible'] = $sitewideAlert->isDismissible();
   $variables['style'] = $sitewideAlert->getStyle();
   $variables['style_class'] = $sitewideAlert->getStyleClass();
+  $variables['priority'] = $sitewideAlert->getPriority();
+  $variables['priority_class'] = $sitewideAlert->getPriorityClass();
 
   $variables['attributes']['class'] = [
     'sitewide-alert',
     'alert',
     $sitewideAlert->getStyleClass(),
+  ];
+  
+  $variables['attributes']['class'] = [
+    'sitewide-alert',
+    'alert',
+    $sitewideAlert->getPriorityClass(),
   ];
 
   // The data-uuid attribute is needed for the dynamic loading via JS to work.
@@ -77,8 +85,10 @@ function sitewide_alert_theme_suggestions_sitewide_alert(array $variables) {
   $sitewideAlert = $variables['elements']['#sitewide_alert'];
 
   $suggestions[] = 'sitewide_alert__' . $sitewideAlert->getStyle();
+  $suggestions[] = 'sitewide_alert__' . $sitewideAlert->getPriority();
   $suggestions[] = 'sitewide_alert__' . ($sitewideAlert->isDismissible() ? 'dismissible' : 'notdismissible');
   $suggestions[] = 'sitewide_alert__' . $sitewideAlert->getStyle() . '__' . ($sitewideAlert->isDismissible() ? 'dismissible' : 'notdismissible');
+  $suggestions[] = 'sitewide_alert__' . $sitewideAlert->getPriority() . '__' . ($sitewideAlert->isDismissible() ? 'dismissible' : 'notdismissible');
 
   return $suggestions;
 }
