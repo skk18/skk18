@@ -51,6 +51,7 @@ class AlertStyleProvider {
    */
   public static function alertStyleName(string $class): TranslatableMarkup {
     $alertStyle = self::alertStyles();
+	
     if (isset($alertStyle[$class])) {
       return new TranslatableMarkup($alertStyle[$class]);
     }
