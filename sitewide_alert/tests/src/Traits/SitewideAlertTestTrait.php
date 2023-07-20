@@ -29,6 +29,7 @@ trait SitewideAlertTestTrait {
       'user_id' => 1,
       'name' => $random->name(),
       'style' => 'primary',
+      'priority' => 'low',
       'dismissable' => TRUE,
       'message' => [
         'value' => $random->sentences(10),

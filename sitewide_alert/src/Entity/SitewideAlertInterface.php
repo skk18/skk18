@@ -143,6 +143,25 @@ interface SitewideAlertInterface extends ContentEntityInterface, RevisionLogInte
    * @return array
    *   The patterns of pages to show on.
    */
+   
+    public function getPriority():? string;
+
+  /**
+   * Gets the style class to use for the alert.
+   *
+   * @return string
+   *   The style class to use.
+   */
+  public function getPriorityClass(): string;
+
+  /**
+   * Gets the pages to show on.
+   *
+   * @return array
+   *   The patterns of pages to show on.
+   */
+   
+   
   public function getPagesToShowOn(): array;
 
   /**

@@ -8,6 +8,9 @@ sitewide_alert.settings:
     alert_styles:
       type: 'string'
       label: 'Available alert styles'
+    alert_priority:
+      type: 'string'
+      label: 'Available alert priorities'
     refresh_interval:
       type: 'integer'
       label: 'Browser Refresh Interval (in seconds)'

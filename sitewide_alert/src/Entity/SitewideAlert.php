@@ -272,7 +272,64 @@ class SitewideAlert extends EditorialContentEntityBase implements SitewideAlertI
       ])
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', FALSE)
+      ->setRequired(TRUE);  
+
+      $fields['style'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(new TranslatableMarkup('Alert Style'))
+      ->setDescription(new TranslatableMarkup('The style of this alert. This mainly can be used to change the color of the alert.'))
+      ->setSettings([
+        'allowed_values_function' => '\Drupal\sitewide_alert\AlertStyleProvider::alertStyles',
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'options_select',
+        'weight' => -14,
+      ])
+      ->setDisplayOptions('view', [
+        'region' => 'hidden',
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE)
+      ->setRequired(TRUE);  
+	  
+	  
+	   $fields['priority'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(new TranslatableMarkup('Alert Priority'))
+      ->setDescription(new TranslatableMarkup('The priority of this alert.'))
+      ->setSettings([
+        'allowed_values_function' => '\Drupal\sitewide_alert\AlertPriorityProvider::alertPriority',
+      ])
+
+      ->setDisplayOptions('form', [
+        'type' => 'options_select',
+        'weight' => -14,
+      ])
+      ->setDisplayOptions('view', [
+        'region' => 'hidden',
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE)
       ->setRequired(TRUE);
+
+      $fields['priority'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(new TranslatableMarkup('Alert Priority'))
+      ->setDescription(new TranslatableMarkup('The priority of this alert.'))
+      ->setSettings([
+        'allowed_values_function' => '\Drupal\sitewide_alert\AlertPriorityProvider::alertPriority',
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'options_select',
+        'weight' => -14,
+      ])
+      ->setDisplayOptions('view', [
+        'region' => 'hidden',
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE)
+      ->setRequired(TRUE);
+	  
+	  
+	  
+	  
 
     $fields['dismissible'] = BaseFieldDefinition::create('boolean')
       ->setLabel(new TranslatableMarkup('Dismissible'))
@@ -287,6 +344,8 @@ class SitewideAlert extends EditorialContentEntityBase implements SitewideAlertI
       ])
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', FALSE);
+	  
+	  
 
     $fields['dismissible_ignore_before_time'] = BaseFieldDefinition::create('timestamp')
       ->setLabel(new TranslatableMarkup('Ignore Dismissals Before'))
@@ -490,6 +549,20 @@ class SitewideAlert extends EditorialContentEntityBase implements SitewideAlertI
    */
   public function getStyleClass(): string {
     return Html::cleanCssIdentifier('alert-' . $this->get('style')->value);
+  }
+  
+   /**
+   * {@inheritdoc}
+   */
+  public function getPriority(): ?string {
+    return $this->get('priority')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPriorityClass(): string {
+    return Html::cleanCssIdentifier('alert-' . $this->get('priority')->value);
   }
 
   /**
