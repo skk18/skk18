@@ -16,6 +16,8 @@ use Symfony\Component\Validator\Constraint;
 class LimitToPagesConstraint extends Constraint {
 
   /**
+   * Message for invalid paths.
+   *
    * Message shown when the entity is marked to limit to specific pages, but
    * what is giving is invalid.
    *

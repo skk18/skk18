@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\sitewide_alert\Kernel;
 
 use Drupal\Core\Language\LanguageInterface;
-use Drupal\sitewide_alert\SitewideAlertManager;
 use Drupal\language\Entity\ConfigurableLanguage;
+use Drupal\sitewide_alert\SitewideAlertManager;
 
 /**
  * Defines a class for testing the sitewide alert entity.

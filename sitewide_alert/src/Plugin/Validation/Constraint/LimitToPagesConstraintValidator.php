@@ -33,11 +33,13 @@ class LimitToPagesConstraintValidator extends ConstraintValidator {
   /**
    * Returns TRUE if all paths given are valid. False if any paths are invalid.
    *
-   * @param $pagesValue
+   * @param string $pagesValue
+   *   The pages config value.
    *
    * @return bool
+   *   TRUE if all paths given are valid; False if any paths are invalid.
    */
-  private function validPathsValue($pagesValue): bool {
+  private function validPathsValue(string $pagesValue): bool {
     foreach (explode("\n", strip_tags($pagesValue)) as $path) {
       $path = trim($path);
 

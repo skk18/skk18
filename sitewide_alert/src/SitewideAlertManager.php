@@ -113,7 +113,7 @@ class SitewideAlertManager {
     /** @var \Drupal\sitewide_alert\Entity\SitewideAlertInterface[] $activeVisibleSitewideAlerts */
     $activeVisibleSitewideAlerts = $this->activeSitewideAlerts();
 
-    // Remove any sitewide alerts that are scheduled and it is not time to show them.
+    // Remove any alerts that are scheduled and it is not time to show them.
     foreach ($activeVisibleSitewideAlerts as $id => $sitewideAlert) {
       if ($sitewideAlert->isScheduled() &&
         !$sitewideAlert->isScheduledToShowAt($this->requestDateTime())) {
