@@ -1,5 +1,0 @@
-show_on_admin: 0
-alert_styles: 'primary|Default'
-refresh_interval: 15
-automatic_refresh: 1
-cache_max_age: 15
