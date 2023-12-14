@@ -1,7 +1,0 @@
-registration_form.register_user:
-  path: '/register'
-  defaults:
-    _title: 'User Registration'
-    _form: '\Drupal\registration_form\Form\RegistrationForm'
-  requirements:
-    _access: 'TRUE'
