@@ -89,6 +89,7 @@ class SitewideAlertsController extends ControllerBase {
         'dismissible' => $sitewideAlert->isDismissible(),
         'dismissalIgnoreBefore' => $sitewideAlert->getDismissibleIgnoreBeforeTime(),
         'styleClass' => $sitewideAlert->getStyleClass(),
+        'priorityClass' => $sitewideAlert->getPriorityClass(),
         'showOnPages' => $sitewideAlert->getPagesToShowOn(),
         'negateShowOnPages' => $sitewideAlert->shouldNegatePagesToShowOn(),
         'renderedAlert' => $this->renderer->renderPlain($alertView),

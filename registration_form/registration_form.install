@@ -31,6 +31,13 @@ function registration_form_schema(){
                 'not null' => TRUE,
             ),
 			
+		    'batch' => array(
+                'description' => 'Batch',
+                'type' => 'varchar',
+                'length' => 100,
+                'not null' => TRUE,
+            ),
+			
 			
 			
         ),

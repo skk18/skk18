@@ -21,6 +21,7 @@ class SitewideAlertListBuilder extends EntityListBuilder {
   public function buildHeader(): array {
     $header['name'] = $this->t('Name');
     $header['style'] = $this->t('Style');
+    $header['priority'] = $this->t('Priority');
     $header['active'] = $this->t('Active');
     $header['scheduled'] = $this->t('Scheduled');
     return $header + parent::buildHeader();
@@ -37,6 +38,7 @@ class SitewideAlertListBuilder extends EntityListBuilder {
       ['sitewide_alert' => $entity->id()]
     );
     $row['style'] = AlertStyleProvider::alertStyleName($entity->getStyle());
+    $row['priority'] = AlertPriorityProvider::alertPriorityName($entity->getPriority());
     $row['active'] = $entity->isPublished() ? '✔' : '✘';
     $row['scheduled'] = $entity->isScheduled() ? '✔' : '✘';
     return $row + parent::buildRow($entity);

@@ -49,6 +49,13 @@ class RegistrationForm extends FormBase {
       '#maxlength' => 50,
       '#default_value' => '',
     ];
+	$form['batch'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('User Batch'),
+      '#required' => TRUE,
+      '#maxlength' => 50,
+      '#default_value' => '',
+    ];
 	
 	
     $form['actions']['#type'] = 'actions';
