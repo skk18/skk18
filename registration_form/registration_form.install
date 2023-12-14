@@ -1,0 +1,40 @@
+<?php
+use Drupal\Core\Database\Database;
+ 
+/**
+ * Implements hook_schema().
+ */
+function registration_form_schema(){
+    $schema['register_user'] = array(
+        'description' => 'The table for storing the reagistered user data.',
+        'fields' => array(
+            
+            'user_name' => array(
+                'description' => 'User Name',
+                'type' => 'varchar',
+                'length' => 255,
+                'not null' => TRUE,
+                'default' => '',
+            ),
+           
+            'user_id' => array(
+                'description' => 'User ID',
+                'type' => 'int',
+                'length' => 100,
+                'not null' => TRUE,
+               
+            ),
+            'user_email' => array(
+                'description' => 'Email',
+                'type' => 'varchar',
+                'length' => 100,
+                'not null' => TRUE,
+            ),
+			
+			
+			
+        ),
+        'primary key' => array('user_id'),
+    );
+    return $schema;
+}
