@@ -1,0 +1,4 @@
+name: Registration Form
+type: module
+description: 'Creating Registration Form'
+core_version_requirement: 9.x
